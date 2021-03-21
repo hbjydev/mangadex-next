@@ -28,3 +28,10 @@ URI from normal.
 ```env
 DATABASE_URI="<username>:<password>@tcp(<host>:<port>)/<database>"
 ```
+
+## Migrations
+
+This repository uses the `migrate` CLI to run its migrations.
+
+See https://github.com/golang-migrate/migrate/tree/master/cmd/migrate for an
+installation guide.
