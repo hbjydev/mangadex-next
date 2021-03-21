@@ -11,11 +11,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type password string
 type User struct {
 	ID        string    `json:"id"`
 	Username  string    `json:"username"`
-	Password  password  `json:"password"`
+	Password  string    `json:"-"`
 	Email     string    `json:"email"`
 	LevelID   string    `json:"level_id"`
 	JoinedAt  time.Time `json:"joined_at"`
@@ -30,8 +29,59 @@ type User struct {
 	AvatarURL string    `json:"avatar"`
 }
 
-func (password) MarshalJSON() ([]byte, error) {
-	return []byte(`""`), nil
+func GetUsers() ([]User, error) {
+	rows, err := database.DB.Query(`
+        SELECT
+            hex(id), username, email, password, level_id, last_seen, website,
+            biography, views, uploads, premium, md_at_home, avatar_url,
+            joined_at, update_at
+        FROM users
+    `)
+	if err != nil {
+		log.Printf("Users: error at SQL query: %v\n", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	users := make([]User, 0)
+	for rows.Next() {
+		var u User
+		var ls mysql.NullTime
+		var ja mysql.NullTime
+		var ua mysql.NullTime
+
+		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.Password, &u.LevelID,
+			&ls, &u.Website, &u.Biography, &u.Views, &u.Uploads, &u.Premium,
+			&u.MDAtHome, &u.AvatarURL, &ja, &ua); err != nil {
+			log.Printf("UserByUsername: error at SQL query: %v\n", err)
+			return nil, err
+		}
+
+		if ls.Valid {
+			u.LastSeen = ls.Time
+		} else {
+			log.Printf("UserByUsername: invalid SQL datetime value (id %v)\n", u.ID)
+			return nil, errors.New("invalid sql datetime value")
+		}
+
+		if ja.Valid {
+			u.JoinedAt = ja.Time
+		} else {
+			log.Printf("UserByUsername: invalid SQL datetime value (id %v)\n", u.ID)
+			return nil, errors.New("invalid sql datetime value")
+		}
+
+		if ua.Valid {
+			u.UpdateAt = ua.Time
+		} else {
+			log.Printf("UserByUsername: invalid SQL datetime value (id %v)\n", u.ID)
+			return nil, errors.New("invalid sql datetime value")
+		}
+
+		users = append(users, u)
+	}
+
+	return users, nil
 }
 
 func UserByUsername(username string) (*User, error) {
@@ -39,7 +89,8 @@ func UserByUsername(username string) (*User, error) {
         SELECT
             hex(id), username, email, password, level_id, last_seen, website,
             biography, views, uploads, premium, md_at_home, avatar_url,
-            joined_at, update_at FROM users
+            joined_at, update_at
+        FROM users
         WHERE username = ?
     `, username)
 

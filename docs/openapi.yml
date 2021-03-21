@@ -17,6 +17,8 @@ schemes:
 tags:
   - name: health
     description: 'Service health endpoints'
+  - name: users
+    description: 'Service user endpoints'
 
 paths:
   /-/healthy:
@@ -28,4 +30,39 @@ paths:
       responses:
         '200':
           description: 'Everything is healthy.'
+  /-/metrics:
+    get:
+      summary: Retrieves some metrics about the API server and database.
+      operationId: metrics
+      tags:
+        - health
+      responses:
+        '200':
+          description: 'A Prometheus-compatible metrics list.'
 
+  /users:
+    get:
+      summary: Retrieves every user in the database.
+      operationId: getAllUsers
+      tags:
+        - users
+      responses:
+        '200':
+          description: 'All users in the database.'
+
+  /users/{username}:
+    get:
+      summary: Retrieves a single user from the database.
+      operationId: getOneUser
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user you want information on.
+      responses:
+        '200':
+          description: 'A single user from the database.'

@@ -42,6 +42,9 @@ func main() {
 	healthRouter := routers.HealthRouter{}
 	healthRouter.RegisterRoutes(r)
 
+	userRouter := routers.UserRouter{}
+	userRouter.RegisterRoutes(r)
+
 	log.Println("Starting server on :3000...")
 	log.Fatal(http.ListenAndServe(":3000", r))
 }

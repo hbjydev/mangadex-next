@@ -7,17 +7,19 @@ import (
 	"github.com/hbjydev/mangadex-next/controllers"
 )
 
-type HealthRouter struct {
-	Controller controllers.HealthController
-}
+type HealthRouter struct{}
 
 func (h *HealthRouter) healthcheck(w http.ResponseWriter, r *http.Request) {
 	controller := controllers.HealthController{}
 	controller.Healthy(w, r)
 }
 
-func (h *HealthRouter) RegisterRoutes(r *mux.Router) {
-	pathPrefix := r.PathPrefix("/-")
+func (h *HealthRouter) metrics(w http.ResponseWriter, r *http.Request) {
+	controller := controllers.HealthController{}
+	controller.Metrics(w, r)
+}
 
-	pathPrefix.Path("/healthy").HandlerFunc(h.healthcheck).Methods("GET")
+func (h *HealthRouter) RegisterRoutes(r *mux.Router) {
+	r.HandleFunc("/-/healthy", h.healthcheck)
+	r.HandleFunc("/-/metrics", h.metrics)
 }
