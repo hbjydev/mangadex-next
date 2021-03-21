@@ -1,0 +1,36 @@
+version: '3.1'
+
+networks:
+  public: {}
+  private: {}
+
+volumes:
+  mariadb_data: {}
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 3000:3000
+    networks:
+      - public
+      - private
+    environment:
+      DATABASE_URI: mangadex:mangadex@tcp(mariadb:3306)/mangadex
+
+  mariadb:
+    image: mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - private
+    environment:
+      MYSQL_DATABASE: mangadex
+      MYSQL_USER: mangadex
+      MYSQL_PASSWORD: mangadex
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+

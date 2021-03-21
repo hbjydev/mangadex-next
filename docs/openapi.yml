@@ -1,0 +1,31 @@
+---
+openapi: '3.0.0'
+
+info:
+  version: 6.0.0
+  title: Mangadex API
+  description: 'The API powering the MangaDex service.'
+  license:
+    name: BSD 3-Clause
+
+servers:
+  - url: http://localhost:3000
+
+schemes:
+  - 'http'
+
+tags:
+  - name: health
+    description: 'Service health endpoints'
+
+paths:
+  /-/healthy:
+    get:
+      summary: Performs a quick healthcheck on the API server.
+      operationId: healthcheck
+      tags:
+        - health
+      responses:
+        '200':
+          description: 'Everything is healthy.'
+
