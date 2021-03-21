@@ -30,6 +30,8 @@ paths:
       responses:
         '200':
           description: 'Everything is healthy.'
+        '500':
+          description: 'Something is not healthy on the server.'
   /-/metrics:
     get:
       summary: Retrieves some metrics about the API server and database.
@@ -39,6 +41,8 @@ paths:
       responses:
         '200':
           description: 'A Prometheus-compatible metrics list.'
+        '500':
+          description: 'Something went wrong while collecting metrics.'
 
   /users:
     get:
@@ -49,7 +53,8 @@ paths:
       responses:
         '200':
           description: 'All users in the database.'
-
+        '500':
+          description: 'Something went wrong on the server side.'
   /users/{username}:
     get:
       summary: Retrieves a single user from the database.
@@ -66,3 +71,7 @@ paths:
       responses:
         '200':
           description: 'A single user from the database.'
+        '404':
+          description: 'No such user was found.'
+        '500':
+          description: 'Something went wrong on the server side.'
