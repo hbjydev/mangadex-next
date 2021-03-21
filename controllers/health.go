@@ -10,6 +10,7 @@ import (
 type HealthController struct{}
 
 func (h *HealthController) Healthy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -18,8 +19,9 @@ func (h *HealthController) Metrics(w http.ResponseWriter, r *http.Request) {
 
 	output += fmt.Sprintf("mangadex_item_count{type=\"user\"} %v\n", countUsers())
 
-	w.Write([]byte(output))
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(output))
 }
 
 func countUsers() int {

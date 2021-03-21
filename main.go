@@ -38,6 +38,7 @@ func main() {
 
 	r.Use(middlewares.LogMiddleware)
 	r.Use(middlewares.SentryMiddleware)
+	r.Use(middlewares.JSONMiddleware)
 
 	healthRouter := routers.HealthRouter{}
 	healthRouter.RegisterRoutes(r)
