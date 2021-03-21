@@ -7,6 +7,10 @@ DevOps implementation, with GitHub Actions providing automatic updates.
 API documentation in the form of an OpenAPI spec can be found in the `docs`
 directory.
 
+## Default User
+
+The default user has a username of `root` and a password of `root`.
+
 ## Developing
 
 This repository comes with a Docker Compose configuration used to bring up a dev
